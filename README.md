@@ -1,6 +1,16 @@
-# Script Manager - Basic MERN Project
+# Script Manager
 
-A simple fresher-level MERN project for managing YouTube/video scripts. It includes register/login authentication and basic CRUD: add, view, edit and delete scripts. Each user's scripts are kept separate using JWT authentication.
+A full-stack MERN application for managing YouTube and video scripts from idea to completion. It includes register/login authentication, private user workspaces, and CRUD features for adding, editing, deleting, filtering, and tracking scripts by status.
+
+## Screenshots
+
+### Login
+
+![Login screen](docs/screenshots/login.png)
+
+### Dashboard
+
+![Dashboard](docs/screenshots/dashboard.png)
 
 ## Features
 
@@ -16,6 +26,8 @@ A simple fresher-level MERN project for managing YouTube/video scripts. It inclu
 - Node.js + Express
 - MongoDB + Mongoose
 - JWT authentication
+- Render backend deployment
+- Vercel frontend deployment
 
 ## Run Locally
 
@@ -30,18 +42,17 @@ In a second terminal, start the backend:
 
 ```bash
 cd server
-npm install
+npm ci
 npm run dev
 ```
 
-If local MongoDB is not installed, the backend automatically starts a temporary local database for demo. Data resets when the backend stops.
-
-For permanent local data, create `server/.env`:
+Create `server/.env` with your Atlas database connection and a JWT secret of at least 32 characters:
 
 ```env
-MONGO_URI=mongodb://127.0.0.1:27017/scriptflow
-JWT_SECRET=any-long-random-string
+MONGO_URI=
+JWT_SECRET=
 PORT=5001
+CLIENT_URLS=http://localhost:5173
 ```
 
 ## Deploy
@@ -54,13 +65,13 @@ Use these services:
 
 ### Backend on Render
 
-1. Create a MongoDB Atlas free cluster and copy the connection string.
+1. Create a MongoDB Atlas free cluster, create a database user, allow the Render service to access the cluster, and copy the connection string.
 2. On Render, create a new Web Service from this GitHub repo.
 3. Set root directory to `server`.
 4. Set build command:
 
 ```bash
-npm install
+npm ci
 ```
 
 5. Set start command:
@@ -72,22 +83,14 @@ npm start
 6. Add environment variables:
 
 ```env
-MONGO_URI=your_mongodb_atlas_connection_string
-JWT_SECRET=any_long_random_secret
+MONGO_URI=
+JWT_SECRET=
 NODE_ENV=production
+CLIENT_URLS=
+NODE_VERSION=20
 ```
 
-After deploy, Render will give a backend URL like:
-
-```text
-https://your-app-name.onrender.com
-```
-
-The API URL for frontend will be:
-
-```text
-https://your-app-name.onrender.com/api
-```
+Use the actual Render URL in `CLIENT_URLS` only after Vercel gives you the production URL. Do not add a trailing slash.
 
 ### Frontend on Vercel
 
@@ -108,10 +111,10 @@ dist
 5. Add environment variable:
 
 ```env
-VITE_API_URL=https://your-render-backend-url.onrender.com/api
+VITE_API_URL=
 ```
 
-Then deploy. Register, login and CRUD will work using the deployed backend.
+Set `VITE_API_URL` to your actual Render URL followed by `/api`, then redeploy the Vercel frontend. The Render health endpoint is `/api/health`.
 
 ## Resume Bullet
 

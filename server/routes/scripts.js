@@ -20,21 +20,30 @@ router.get('/', async (req, res) => {
 });
 router.post('/', async (req, res) => {
   try {
-    res.status(201).json(await Script.create({ ...req.body, owner: req.userId }));
+    const { title, content, excerpt, status, tags, scriptLanguage } = req.body;
+    res.status(201).json(await Script.create({ title, content, excerpt, status, tags, scriptLanguage, owner: req.userId }));
   } catch (error) {
     handleError(res, error);
   }
 });
 router.patch('/:id', async (req, res) => {
   try {
-    res.json(await Script.findOneAndUpdate({ _id: req.params.id, owner: req.userId }, req.body, { new: true, runValidators: true }));
+    const { title, content, excerpt, status, tags, scriptLanguage } = req.body;
+    const script = await Script.findOneAndUpdate(
+      { _id: req.params.id, owner: req.userId },
+      { title, content, excerpt, status, tags, scriptLanguage },
+      { new: true, runValidators: true }
+    );
+    if (!script) return res.status(404).json({ message: 'Script not found.' });
+    res.json(script);
   } catch (error) {
     handleError(res, error);
   }
 });
 router.delete('/:id', async (req, res) => {
   try {
-    await Script.findOneAndDelete({ _id: req.params.id, owner: req.userId });
+    const script = await Script.findOneAndDelete({ _id: req.params.id, owner: req.userId });
+    if (!script) return res.status(404).json({ message: 'Script not found.' });
     res.status(204).end();
   } catch (error) {
     handleError(res, error);
